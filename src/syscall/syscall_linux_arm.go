@@ -8,7 +8,7 @@ import "unsafe"
 
 const _SYS_dup = SYS_DUP2
 
-func Getpagesize() int { return 4096 }
+func Getpagesize() int { return 16384 }
 
 func TimespecToNsec(ts Timespec) int64 { return int64(ts.Sec)*1e9 + int64(ts.Nsec) }
 
@@ -136,8 +136,8 @@ func Statfs(path string, buf *Statfs_t) (err error) {
 }
 
 func mmap(addr uintptr, length uintptr, prot int, flags int, fd int, offset int64) (xaddr uintptr, err error) {
-	page := uintptr(offset / 4096)
-	if offset != int64(page)*4096 {
+	page := uintptr(offset / 16384)
+	if offset != int64(page)*16384 {
 		return 0, EINVAL
 	}
 	return mmap2(addr, length, prot, flags, fd, page)

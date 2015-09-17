@@ -116,7 +116,7 @@ func archinit() {
 			ld.INITDAT = 0
 		}
 		if ld.INITRND == -1 {
-			ld.INITRND = 4096
+			ld.INITRND = 16384
 		}
 
 	case obj.Hlinux, /* arm elf */
@@ -134,7 +134,7 @@ func archinit() {
 			ld.INITDAT = 0
 		}
 		if ld.INITRND == -1 {
-			ld.INITRND = 4096
+			ld.INITRND = 16384
 		}
 
 	case obj.Hnacl:
@@ -156,13 +156,13 @@ func archinit() {
 		ld.Machoinit()
 		ld.HEADR = ld.INITIAL_MACHO_HEADR
 		if ld.INITTEXT == -1 {
-			ld.INITTEXT = 4096 + int64(ld.HEADR)
+			ld.INITTEXT = 16384 + int64(ld.HEADR)
 		}
 		if ld.INITDAT == -1 {
 			ld.INITDAT = 0
 		}
 		if ld.INITRND == -1 {
-			ld.INITRND = 4096
+			ld.INITRND = 16384
 		}
 	}
 

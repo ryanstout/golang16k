@@ -40,7 +40,7 @@ func mmap_fixed(v unsafe.Pointer, n uintptr, prot, flags, fd int32, offset uint3
 	// On some systems, mmap ignores v without
 	// MAP_FIXED, so retry if the address space is free.
 	if p != v && addrspace_free(v, n) {
-		if uintptr(p) > 4096 {
+		if uintptr(p) > 16384 {
 			munmap(p, n)
 		}
 		p = mmap(v, n, prot, flags|_MAP_FIXED, fd, offset)
@@ -53,7 +53,7 @@ func mmap_fixed(v unsafe.Pointer, n uintptr, prot, flags, fd int32, offset uint3
 //go:nosplit
 func sysAlloc(n uintptr, sysStat *uint64) unsafe.Pointer {
 	p := mmap(nil, n, _PROT_READ|_PROT_WRITE, _MAP_ANON|_MAP_PRIVATE, -1, 0)
-	if uintptr(p) < 4096 {
+	if uintptr(p) < 16384 {
 		if uintptr(p) == _EACCES {
 			print("runtime: mmap: access denied\n")
 			exit(2)
@@ -115,7 +115,7 @@ func sysReserve(v unsafe.Pointer, n uintptr, reserved *bool) unsafe.Pointer {
 	if ptrSize == 8 && uint64(n) > 1<<32 {
 		p := mmap_fixed(v, 64<<10, _PROT_NONE, _MAP_ANON|_MAP_PRIVATE, -1, 0)
 		if p != v {
-			if uintptr(p) >= 4096 {
+			if uintptr(p) >= 16384 {
 				munmap(p, 64<<10)
 			}
 			return nil
@@ -126,7 +126,7 @@ func sysReserve(v unsafe.Pointer, n uintptr, reserved *bool) unsafe.Pointer {
 	}
 
 	p := mmap(v, n, _PROT_NONE, _MAP_ANON|_MAP_PRIVATE, -1, 0)
-	if uintptr(p) < 4096 {
+	if uintptr(p) < 16384 {
 		return nil
 	}
 	*reserved = true
